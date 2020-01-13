@@ -44,16 +44,13 @@ namespace Bowling
 
         public static Frame GetFrame(List<uint> nextRolls)
         {
-            if (nextRolls.Count <= 0)
+            if (nextRolls.Count < 2)
                 return Frame.Invalid;
 
             if (nextRolls[0] == 10)
             {
                 return nextRolls.Count < 3 ? Frame.Invalid : Frame.ValidFromRolls(nextRolls, 3, 1);
             }
-
-            if (nextRolls.Count < 2)
-                return Frame.Invalid;
 
             if (nextRolls[0] + nextRolls[1] == 10)
             {
