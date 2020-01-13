@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
+using System.Threading.Tasks.Sources;
 
 namespace Bowling
 {
@@ -10,44 +11,56 @@ namespace Bowling
     {
         public static uint? SubmitRolls(uint[] pinsKnockedDown)
         {
-            int pointer = 0;
+            var rolls = new List<uint>(pinsKnockedDown);
             var frames = new List<Frame>();
-            while (pointer < pinsKnockedDown.Length && frames.Count < 10)
+            while (rolls.Count > 0 && frames.Count < 10)
             {
-                var frame = Frame.GetFrame(pinsKnockedDown.Skip(pointer).ToArray());
+                var frame = Frame.GetFrame(rolls);
                 if (!frame.valid)
                     return null;
                 frames.Add(frame);
-                pointer += frame.pointerMove;
             }
 
             return frames.Aggregate<Frame, uint>(0, (current, frame) => current + frame.score.GetValueOrDefault(0));
+
         }
     }
 
     internal class Frame
     {
-        public int pointerMove { get; private set; }
         public uint? score { get; private set; }
-        public bool valid { get; private set; }
+        public bool valid { get; private set; } = true;
 
-        public static Frame Invalid => new Frame {valid = false, pointerMove = 0};
+        public static Frame Invalid => new Frame {valid = false};
 
-        public static Frame GetFrame(uint[] nextRolls)
+        public static Frame Valid(uint score) => new Frame{score = score};
+
+        public static Frame ValidFromRolls(List<uint> nextRolls, int sumNext, int consumeNext)
         {
-            if (nextRolls.Length <= 0)
+            var score = Enumerable.Range(0, sumNext).Aggregate<int, uint>(0u, (current, i) => current + nextRolls[i]);
+            nextRolls.RemoveRange(0, consumeNext);
+            return Frame.Valid(score);
+        }
+
+        public static Frame GetFrame(List<uint> nextRolls)
+        {
+            if (nextRolls.Count <= 0)
                 return Frame.Invalid;
 
             if (nextRolls[0] == 10)
-                return nextRolls.Length < 3 ? Frame.Invalid : new Frame {valid = true, score = 10 + nextRolls[1] + nextRolls[2], pointerMove = 1};
+            {
+                return nextRolls.Count < 3 ? Frame.Invalid : Frame.ValidFromRolls(nextRolls, 3, 1);
+            }
 
-            if (nextRolls.Length < 2)
+            if (nextRolls.Count < 2)
                 return Frame.Invalid;
 
             if (nextRolls[0] + nextRolls[1] == 10)
-                return nextRolls.Length < 3 ? Frame.Invalid : new Frame {valid = true, score = 10 + nextRolls[2], pointerMove = 2};
+            {
+                return nextRolls.Count < 3 ? Frame.Invalid : Frame.ValidFromRolls(nextRolls, 3, 2);
+            }
 
-            return new Frame {valid = true, score = nextRolls[0] + nextRolls[1], pointerMove = 2};
+            return Frame.ValidFromRolls(nextRolls, 2, 2);
 
         }
     }
