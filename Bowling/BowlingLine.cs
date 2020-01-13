@@ -22,7 +22,6 @@ namespace Bowling
             }
 
             return frames.Aggregate<Frame, uint>(0, (current, frame) => current + frame.score.GetValueOrDefault(0));
-
         }
     }
 
@@ -33,7 +32,7 @@ namespace Bowling
 
         public static Frame Invalid => new Frame {valid = false};
 
-        public static Frame Valid(uint score) => new Frame{score = score};
+        public static Frame Valid(uint score) => new Frame {score = score};
 
         public static Frame ValidFromRolls(List<uint> nextRolls, int sumNext, int consumeNext)
         {
@@ -48,17 +47,12 @@ namespace Bowling
                 return Frame.Invalid;
 
             if (nextRolls[0] == 10)
-            {
                 return nextRolls.Count < 3 ? Frame.Invalid : Frame.ValidFromRolls(nextRolls, 3, 1);
-            }
 
             if (nextRolls[0] + nextRolls[1] == 10)
-            {
                 return nextRolls.Count < 3 ? Frame.Invalid : Frame.ValidFromRolls(nextRolls, 3, 2);
-            }
 
             return Frame.ValidFromRolls(nextRolls, 2, 2);
-
         }
     }
 }
