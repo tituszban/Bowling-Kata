@@ -22,16 +22,18 @@ namespace Bowling.Test
             Assert.AreEqual(null, score);
         }
 
-        [TestCase(5u, 15u)]
-        [TestCase(0u, 10u)]
-        [TestCase(10u, null)]
-        public void RollAfterSpare(uint next, uint? expectedScore)
+        [TestCase(5u, 0u, 20u)]
+        [TestCase(7u, 2u, 26u)]
+        [TestCase(0u, 2u, 12u)]
+        [TestCase(10u, 5u, null)]
+        [TestCase(6u, 4u, null)]
+        public void RollsAfterSpare(uint roll1, uint roll2, uint? expectedScore)
         {
-            var score = BowlingLine.SubmitRolls(new uint[] {5u, 5u, next});
+            var score = BowlingLine.SubmitRolls(new uint[] {5u, 5u, roll1, roll2});
             Assert.AreEqual(expectedScore, score);
         }
 
-        [TestCase(3u, 4u, 17u)]
+        [TestCase(3u, 4u, 24u)]
         [TestCase(0u, 0u, 10u)]
         [TestCase(4u, 6u, null)]
         public void RollsAfterStrike(uint roll1, uint roll2, uint? expectedScore)
@@ -40,7 +42,7 @@ namespace Bowling.Test
             Assert.AreEqual(expectedScore, score);
         }
 
-        [TestCase(3u, 4u, 37u)]
+        [TestCase(3u, 4u, 44u)]
         [TestCase(0u, 0u, 30u)]
         [TestCase(8u, 2u, null)]
         [TestCase(10u, 4u, null)]
@@ -50,8 +52,8 @@ namespace Bowling.Test
             Assert.AreEqual(expectedScore, score);
         }
 
-        [TestCase(3u, 4u, 40u)]
-        [TestCase(9u, 0u, 48u)]
+        [TestCase(3u, 4u, 47u)]
+        [TestCase(9u, 0u, 57u)]
         [TestCase(4u, 6u, null)]
         public void RollsAfterDoubleStrike(uint roll1, uint roll2, uint? expectedScore)
         {
