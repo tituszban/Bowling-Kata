@@ -25,7 +25,7 @@ namespace Bowling
         }
     }
 
-    class Frame
+    internal class Frame
     {
         public int pointerMove { get; private set; }
         public uint? score { get; private set; }
@@ -39,21 +39,13 @@ namespace Bowling
                 return Frame.Invalid;
 
             if (nextRolls[0] == 10)
-            {
-                if (nextRolls.Length < 3)
-                    return Frame.Invalid;
-                return new Frame {valid = true, score = 10 + nextRolls[1] + nextRolls[2], pointerMove = 1};
-            }
+                return nextRolls.Length < 3 ? Frame.Invalid : new Frame {valid = true, score = 10 + nextRolls[1] + nextRolls[2], pointerMove = 1};
 
             if (nextRolls.Length < 2)
                 return Frame.Invalid;
 
             if (nextRolls[0] + nextRolls[1] == 10)
-            {
-                if (nextRolls.Length < 3)
-                    return Frame.Invalid;
-                return new Frame {valid = true, score = 10 + nextRolls[2], pointerMove = 2};
-            }
+                return nextRolls.Length < 3 ? Frame.Invalid : new Frame {valid = true, score = 10 + nextRolls[2], pointerMove = 2};
 
             return new Frame {valid = true, score = nextRolls[0] + nextRolls[1], pointerMove = 2};
 
